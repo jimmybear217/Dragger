@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" tyle="text/css" href="default.css">
+	</head>
+
+		<div id="field"></div>
+
+	<body>
+		<table>
+			<tr>
+				<th>Data </th><th>Value</th>
+			</tr>
+			<tr>
+				<td>Type of Click </td><td id="text">blank</td>
+			</tr>
+			<tr>
+				<td>POSX old </td><td id="posX_old"></td>
+			</tr>
+			<tr>
+				<td>POSY old </td><td id="posY_old"></td>
+			</tr>
+			<tr>
+				<td>POSX current </td><td id="posX_now"></td>
+			</tr>
+			<tr>
+				<td>POSY current </td><td id="posY_now"></td>
+			</tr>
+			<tr>
+				<td>POSX new </td><td id="posX_new"></td>
+			</tr>
+			<tr>
+				<td>POSY new </td><td id="posY_new"></td>
+			</tr>
+			<tr>
+				<td>Dragged X</td><td id="draggedX"></td>
+			</tr>
+			<tr>
+				<td>Dragged Y</td><td id="draggedY"></td>
+			</tr>
+			<tr>
+				<td>Dragged Area</td><td id="draggedArea"></td>
+			</tr>
+		</table>
+	</body>
+</html>
+<script type="text/javascript">
+
+	// algorithm's vars
+	var flag = 0;
+	var element = document.getElementsByTagName('html')[0];
+	var display = document.getElementById('text');
+
+	// starting mouse position
+	var posX_old = 0;
+	var posY_old = 0;
+	// current mouse position
+	var posX_now = 0;
+	var posY_now = 0;
+	// ending mouse position
+	var posX_new = 0;
+	var posY_new = 0;
+	// dragging area
+	var draggedX = 0;
+	var draggedY = 0;
+	var draggedArea = 0;
+
+	// visual click alert
+	var default_text_bgd_color = display.style.background
+
+	// field
+	var field = document.getElementById("field");
+
+	// starting mouse sensor
+	element.addEventListener("mousedown", function(event){
+		posX_old = event.clientX;
+    	posY_old = event.clientY;
+    	document.getElementById("posX_old").innerHTML = posX_old;
+	    document.getElementById("posY_old").innerHTML = posY_old;
+
+	    display.innerHTML = "clicking...";
+	    display.style.background = "red";
+
+	    flag = 0;
+	}, false);
+	// current mouse sensor
+	element.addEventListener("mousemove", function(event){
+
+		posX_now = event.clientX;
+    	posY_now = event.clientY;
+    	document.getElementById("posX_now").innerHTML = posX_now;
+	    document.getElementById("posY_now").innerHTML = posY_now;
+
+	    flag = 1;
+	}, false);
+	// ending mouse sensor
+	element.addEventListener("mouseup", function(event){
+		posX_new = event.clientX;
+    	posY_new = event.clientY;
+    	document.getElementById("posX_new").innerHTML = posX_new;
+	    document.getElementById("posY_new").innerHTML = posY_new;
+
+		draggedX = 0;
+		draggedY = 0;
+		draggedArea = 0;
+
+		display.style.background = default_text_bgd_color;
+
+	    if(flag === 0){
+	        console.log("click at (" + posX_old + ":" + posY_old + ")");
+	        display.innerHTML = "Click";
+
+	        // moving on click
+	        //field.style.background="blue";
+	        //field.style.transform = "translate(" + posX_old + "px," + posY_old + "px)";
+	    }
+	    else if(flag === 1){
+	        console.log("drag from (" + posX_old + ":" + posY_old + ") to (" + posX_new + ":" + posY_new + ")");
+	        display.innerHTML = "Drag";
+
+	        // comparing
+        	draggedX = (posX_old - posX_new);
+			draggedY = (posY_old - posY_new);
+
+			if (draggedX < 0){
+				draggedX = (draggedX - (2 * draggedX));
+			}
+			if (draggedY < 0){
+				draggedY = (draggedY - (2 * draggedY));
+			}
+
+			draggedArea = (draggedX * draggedY);
+
+        	document.getElementById("draggedX").innerHTML = draggedX;
+			document.getElementById("draggedY").innerHTML = draggedY;
+			document.getElementById("draggedArea").innerHTML = draggedArea;
+
+			if (draggedX > 90 || draggedY > 90){
+		        // moving
+		        field.style.background="green";
+		        field.style.transform = "translate(" + posX_new + "px," + posY_new + "px)";
+		        field.style.transform = "scale("+ draggedX + "px,"+ draggedY + "px)"
+			}
+	    }
+	});
+
+
+
+</script>
+<style type="text/css">
+
+#field {
+	background-color: rgba(255,255,255,0);
+	width: 40px;
+	height: 40px;
+	transition: 1s;
+}
+
+</style>
